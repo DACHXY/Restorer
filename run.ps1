@@ -3,8 +3,11 @@ Install-PackageProvider -Name NuGet -Force
 Install-Module -SkipPublisherCheck -Name Microsoft.WinGet.Client -Force
 
 # Get Winget Newest and Install
-Invoke-WebRequest -Uri https://aka.ms/getwinget -OutFile Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+Write-Host "Downloading AppInstaller package..."
+$wc = New-Object net.webclient
+$wc.Downloadfile("https://aka.ms/getwinget", "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle")
 Add-AppxPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle -InstallAllResources
+Write-Host "[DONE] AppInstaller package Installed."
 
 # Install the powershell
 winget install -e --id Microsoft.PowerShell  --accept-package-agreements --accept-source-agreements
