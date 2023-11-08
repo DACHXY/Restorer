@@ -3,7 +3,8 @@ function InstallChocolateyAndImportModule {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     
     # Make 'refreshenv' available right away
-    Import-Module "C:\ProgramData\chocolatey\helpers\chocolateyProfile.psm1"
+    $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
+    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     refreshenv
 }
 
