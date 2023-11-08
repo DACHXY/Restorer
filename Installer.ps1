@@ -1,4 +1,3 @@
-
 function InstallChocolateyAndImportModule {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     
@@ -48,6 +47,28 @@ function RestoreWTConfig {
     Set-Content -Path $desWindowsTerminalSettingFile -Value (Get-Content $srcWindowsTerminalSettingFile)
 }
 
+function RestoreUserFileStructure {
+    # Restore User file
+    Write-Host "Restore User File"
+    $desUserDir = Join-Path -Path $env:USERPROFILE -ChildPath "Documents\DN"
+    $desUserDirIni = Join-Path -Path $desUserDir -ChildPath "desktop.ini"
+    $UserDirIniContent = @'
+[.ShellClassInfo]
+IconResource=
+[ViewState]
+Mode=
+Vid=
+FolderType=Documents    
+'@
+    # Create User Folder
+    New-Item -ItemType Directory -Path $desUserDir -Force
+    $IconPath = "IconResource=$env:USERPROFILE\Pictures\ICON\Lemon.ico,0"
+    $UserDirIniContent = $UserDirIniContent -replace '\[\.ShellClassInfo\]', "[.ShellClassInfo]`r`n$IconPath"
+    Set-Content -Path $desUserDirIni -Value $UserDirIniContent -Force
+    Write-Host "Done."
+}
+
 InstallChocolateyAndImportModule
 InstallOhMyPosh
 RestoreWTConfig
+RestoreUserFileStructure

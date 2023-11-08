@@ -4,8 +4,7 @@ Install-Module -SkipPublisherCheck -Name Microsoft.WinGet.Client -Force
 
 # Get Winget Newest and Install
 Write-Host "Downloading AppInstaller package..."
-$wc = New-Object Net.WebClient
-$wc.Downloadfile("https://aka.ms/getwinget", "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle")
+(New-Object Net.WebClient).Downloadfile("https://aka.ms/getwinget", "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle")
 Add-AppxPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle -InstallAllResources
 Write-Host "[DONE] AppInstaller package Installed."
 
