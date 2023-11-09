@@ -177,6 +177,7 @@ function main {
     GitConfig
     InstallT1Apps
     InstallAppsFromMsstore
+    DownloadInstaller
 }
 
 main
