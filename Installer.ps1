@@ -1,4 +1,67 @@
-Import-Module -Name "configer.psm1"
+$FILE_ROOT = $FILE_ROOT = Split-Path -parent $MyInvocation.MyCommand.Definition
+
+Import-Module -Name "$FILE_ROOT\configer.psm1"
+
+function InstallT0Apps {
+    $installList = @(
+        "Mozilla.Firefox",
+        "Twilio.Authy",
+        "Opera.Opera",
+        "M2Team.NanaZip",
+        "GNU.Nano",
+        "Git.Git",
+        "Microsoft.VisualStudioCode",
+        "Nvidia.GeForceExperience",
+        "Python.Python.3.11",
+        "Discord.Discord",
+        "OpenJS.NodeJS",
+        "AutoHotkey.AutoHotkey",
+        "Microsoft.PowerToys",
+        "Dell.CommandUpdate"
+    )
+
+    foreach ($package in $installList) {
+        winget install --accept-package-agreements --accept-source-agreements $package --source winget
+    }
+}
+
+function InstallT1Apps {
+    $installList = @(
+        "Notion.Notion",
+        "EmoteInteractive.RemoteMouse",
+        "Docker.DockerDesktop",
+        "Microsoft.VisualStudio.2022.Community",
+        "OBSProject.OBSStudio",
+        "AppWork.JDownloader",
+        "junegunn.fzf",
+        "Guru3D.Afterburner",
+        "REALiX.HWiNFO",
+        "BlenderFoundation.Blender",
+        "VMware.WorkstationPro",
+        "MHNexus.HxD",
+        "Logitech.GHUB",
+        "RiotGames.Valorant.AP",
+        "Valve.Steam",
+        "Spotify",
+        "Figma.Figma",
+        "Postman.Postman",
+        "NordSecurity.NordVPN"
+    )
+    foreach ($package in $installList) {
+        winget install --accept-package-agreements --accept-source-agreements $package --source winget
+    }   
+}
+
+function InstallAppsFromMsstore {
+    $installList = @(
+        "Line",
+        "Messenger",
+        "Surfshark"
+    )
+    foreach ($package in $installList) {
+        winget install --accept-package-agreements --accept-source-agreements $package --source msstore
+    } 
+}
 
 function InstallChocolateyAndImportModule {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -49,6 +112,14 @@ function RestoreWTConfig {
     Set-Content -Path $desWindowsTerminalSettingFile -Value (Get-Content $srcWindowsTerminalSettingFile)
 }
 
+function RestorePowerToysConfig {
+    Write-Host "Copying PowerToys Config file..."
+    $desDir = "$env:USERPROFILE\Documents\Powertoys\Backup\settings_133361257157022308.ptb"
+    $srcDir = "$FILE_ROOT\sources\powertoys_backup.ptb"
+    Copy-Item -Path $srcDir -Destination $desDir
+    Write-Host "[Done] File Copied."
+}
+
 function RestoreUserFileStructure {
     # Restore User file
     Write-Host "Restore User File"
@@ -94,6 +165,9 @@ function main {
     RestoreWTConfig
     RestoreUserFileStructure
     InstallOpenSSHServer
+    InstallT0Apps
+    InstallT1Apps
+    InstallAppsFromMsstore
     GitConfig
 }
 
