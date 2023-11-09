@@ -158,6 +158,14 @@ function InstallOpenSSHServer {
     New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value (Get-Command pwsh).Path -PropertyType String -Force
 }
 
+function DownloadInstaller {
+    Write-Host "[Downloading] minifuse driver"
+    $nc = New-Object Net.WebClient
+    $nc.DownloadFile("https://dl.arturia.net/products/mfcc/soft/MiniFuse_Control_Center_1_1_1_448.exe", "$env:USERPROFILE/Downloads/MiniFuse_Control_Center_1_1_1_448.exe")
+    Write-Host "[Done] minifuse driver"
+
+    & "$env:USERPROFILE/Downloads/MiniFuse_Control_Center_1_1_1_448.exe"
+}
 
 function main {
     InstallChocolateyAndImportModule
