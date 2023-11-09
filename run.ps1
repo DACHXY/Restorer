@@ -1,4 +1,14 @@
-$fileRoot = Split-Path -parent $MyInvocation.MyCommand.Definition
+$FILE_ROOT = Split-Path -parent $MyInvocation.MyCommand.Definition
+
+Import-Module -Name "$FILE_ROOT/utils.psm1"
+
+$isAdmin = CheckIsAdmin
+if (-not $isAdmin) {
+    Write-Host "You are not Admin! Please run this script with Administrator privilege!"
+    Pause
+    Exit
+}
+
 
 # install Package Provider
 Install-PackageProvider -Name NuGet -Force
@@ -6,7 +16,7 @@ Install-Module -SkipPublisherCheck -Name Microsoft.WinGet.Client -Force
 
 # Get Winget Newest and Install
 Write-Host "Downloading AppInstaller package..."
-$desPath = "$fileRoot\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+$desPath = "$FILE_ROOT\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 (New-Object Net.WebClient).Downloadfile("https://aka.ms/getwinget", $desPath)
 Add-AppxPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle -InstallAllResources
 Write-Host "[DONE] AppInstaller package Installed."
@@ -23,4 +33,4 @@ winget install -e --id Microsoft.WindowsTerminal.Preview  --accept-package-agree
 
 Write-Host "Installing Apps & Environment"
 # Start installer with pwsh
-Start-Process pwsh "$FileRoot\Installer.ps1"
+Start-Process pwsh "$FILE_ROOT\Installer.ps1"
