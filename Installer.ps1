@@ -108,12 +108,15 @@ $env:Path = $env:Path + ";C:\Users\Danny\Documents\DN\CMD;"
 function RestoreWTConfig {
     # Restore Windows Terminal Setting
     $desWindowsTerminalSettingFile = $env:LocalAppData + "\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-    $srcWindowsTerminalSettingFile = "sources\wt-settings.json"
-    Set-Content -Path $desWindowsTerminalSettingFile -Value (Get-Content $srcWindowsTerminalSettingFile)
+    $desWindowsTerminalPreviewSettingFile = $env:LocalAppData + "\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"
+    $srcWindowsTerminalSettingFile = "$FILE_ROOT\sources\wt-settings.json"
+    Copy-Item -Path $srcWindowsTerminalSettingFile -Destination $desWindowsTerminalSettingFile
+    Copy-Item -Path $srcWindowsTerminalSettingFile -Destination $desWindowsTerminalPreviewSettingFile
 }
 
 function RestorePowerToysConfig {
     Write-Host "Copying PowerToys Config file..."
+    New-Item -ItemType Directory -Path "$env:USERPROFILE\Documents\Powertoys\Backup" -Force
     $desDir = "$env:USERPROFILE\Documents\Powertoys\Backup\settings_133361257157022308.ptb"
     $srcDir = "$FILE_ROOT\sources\powertoys_backup.ptb"
     Copy-Item -Path $srcDir -Destination $desDir
@@ -127,7 +130,6 @@ function RestoreUserFileStructure {
     $desUserDirIni = Join-Path -Path $desUserDir -ChildPath "desktop.ini"
     $UserDirIniContent = @'
 [.ShellClassInfo]
-IconResource=
 [ViewState]
 Mode=
 Vid=
@@ -174,6 +176,7 @@ function main {
     RestoreUserFileStructure
     InstallOpenSSHServer
     InstallT0Apps
+    RestorePowerToysConfig
     GitConfig
     InstallT1Apps
     InstallAppsFromMsstore
