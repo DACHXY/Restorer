@@ -72,3 +72,5 @@ InstallChocolateyAndImportModule
 InstallOhMyPosh
 RestoreWTConfig
 RestoreUserFileStructure
+
+Pause
