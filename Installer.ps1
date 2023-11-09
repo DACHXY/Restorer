@@ -166,9 +166,9 @@ function main {
     RestoreUserFileStructure
     InstallOpenSSHServer
     InstallT0Apps
+    GitConfig
     InstallT1Apps
     InstallAppsFromMsstore
-    GitConfig
 }
 
 main
