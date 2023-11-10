@@ -201,6 +201,7 @@ function main {
     InstallT1Apps
     InstallAppsFromMsstore
     DownloadInstaller
+    RestoreWSL
 }
 
 # main
