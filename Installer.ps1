@@ -1,3 +1,10 @@
+$backupDir = $args[0]
+
+if (-not (Test-Path $backupDir)){
+    Write-Error "Path: $backupDir not exist!"
+}
+Write-Host "Restore Path: $backupDir"
+
 $FILE_ROOT = $FILE_ROOT = Split-Path -parent $MyInvocation.MyCommand.Definition
 
 Import-Module -Name "$FILE_ROOT\configer.psm1"
@@ -161,12 +168,26 @@ function InstallOpenSSHServer {
     New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value (Get-Command pwsh).Path -PropertyType String -Force
 }
 
-
-
 function DownloadInstaller {
     DownloadAndInstall -Uri "https://dl.arturia.net/products/mfcc/soft/MiniFuse_Control_Center_1_1_1_448.exe" -Filename "MiniFuse_Control_Center_1_1_1_448.exe"
     DownloadAndInstall -Uri "https://application.ivanti.com/SSG/Clients/ps-pulse-win-9.1r11.4-b8575-64bitinstaller.msi" -Filename "ps-pulse-win-9.1r11.4-b8575-64bitinstaller.msi"
 }
+
+function RestoreWSL {
+    $targetDir = Join-Path -Path $backupDir -ChildPath "WSL\Ubuntu\ubuntu-wsl-win11-2023-11-3.tar"
+    New-Item -ItemType Directory -Path "C:\WSL\Images" -Force
+    New-Item -ItemType Directory -Path "C:\WSL\Instance" -Force
+    Write-Host "Images stored at 'C:\WSL\Images'"
+    Write-Host "Instances stored at 'C:\WSL\Instance'"
+    
+    Write-Host "Installing wsl..."
+    wsl --install
+    wsl --set-default-version 2
+    Write-Host "Importing WSL as ubuntu..."
+    wsl --import ubuntu "C:\WSL\Instance" $targetDir
+    Write-Host "[Done] Import WSL as ubuntu."
+}
+
 
 function main {
     InstallChocolateyAndImportModule
