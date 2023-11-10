@@ -1,7 +1,7 @@
 $backupDir = $args[0]
 
 if (-not (Test-Path $backupDir)){
-    Write-Error "Path: $backupDir not exist!"
+    Write-Error "Path: $backupDir not exist! [SKIPED]"
 }
 Write-Host "Restore Path: $backupDir"
 
@@ -188,11 +188,52 @@ function RestoreWSL {
     Write-Host "[Done] Import WSL as ubuntu."
 }
 
+function RestorePicture {
+    $targetDir = Join-Path -Path $backupDir -ChildPath "Documents\Pictures.7z"
+    if (-not (Test-Path $targetDir)) {
+        Write-Error "Target path not found: $targetDir"
+        return
+    }
+
+    7z x $targetDir -o"$env:USERPROFILE" -y
+}
+
+function RestoreUserFiles {
+    Write-Host "Restore User Documents..."
+    New-Item -ItemType Directory -Path "$env:USERPROFILE\Documents\DN" -Force
+    $restore_list = @(
+        "Apps",
+        "Autohotkey",
+        "CMD",
+        "identity",
+        "Library",
+        "Misc",
+        "Projects",
+        "Regedit",
+        "Scripts",
+        "Torrent",
+        "大學資料"
+    )
+
+    foreach ($filename in $restore_list) {
+        $filename = "$filename.7z"
+        $targetDir = Join-Path -Path $backupDir -ChildPath "Documents\$filename"
+        7z x $targetDir -o"$env:USERPROFILE\Documents\DN\" -y
+    }
+    Write-Host "[Done] Restored User Documents."
+}
 
 function main {
     InstallChocolateyAndImportModule
     InstallOhMyPosh
     RestoreWTConfig
+
+    if (Test-Path $backupDir){
+        RestoreWSL
+        RestorePicture
+        RestoreUserFiles
+    }
+
     RestoreUserFileStructure
     InstallOpenSSHServer
     InstallT0Apps
@@ -201,7 +242,6 @@ function main {
     InstallT1Apps
     InstallAppsFromMsstore
     DownloadInstaller
-    RestoreWSL
 }
 
 # main
