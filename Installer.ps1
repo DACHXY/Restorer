@@ -1,6 +1,7 @@
 $FILE_ROOT = $FILE_ROOT = Split-Path -parent $MyInvocation.MyCommand.Definition
 
 Import-Module -Name "$FILE_ROOT\configer.psm1"
+Import-Module -Name "$FILE_ROOT\utils.psm1"
 
 function InstallT0Apps {
     $installList = @(
@@ -160,13 +161,11 @@ function InstallOpenSSHServer {
     New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value (Get-Command pwsh).Path -PropertyType String -Force
 }
 
-function DownloadInstaller {
-    Write-Host "[Downloading] minifuse driver"
-    $nc = New-Object Net.WebClient
-    $nc.DownloadFile("https://dl.arturia.net/products/mfcc/soft/MiniFuse_Control_Center_1_1_1_448.exe", "$env:USERPROFILE/Downloads/MiniFuse_Control_Center_1_1_1_448.exe")
-    Write-Host "[Done] minifuse driver"
 
-    & "$env:USERPROFILE/Downloads/MiniFuse_Control_Center_1_1_1_448.exe"
+
+function DownloadInstaller {
+    DownloadAndInstall -Uri "https://dl.arturia.net/products/mfcc/soft/MiniFuse_Control_Center_1_1_1_448.exe" -Filename "MiniFuse_Control_Center_1_1_1_448.exe"
+    DownloadAndInstall -Uri "https://application.ivanti.com/SSG/Clients/ps-pulse-win-9.1r11.4-b8575-64bitinstaller.msi" -Filename "ps-pulse-win-9.1r11.4-b8575-64bitinstaller.msi"
 }
 
 function main {
@@ -183,5 +182,5 @@ function main {
     DownloadInstaller
 }
 
-main
+# main
 Pause
