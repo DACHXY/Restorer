@@ -223,8 +223,14 @@ function RestoreUserFiles {
     Write-Host "[Done] Restored User Documents."
 }
 
+function InstallSudoCommand {
+    choco install sudo -y
+    refreshenv
+}
+
 function main {
     InstallChocolateyAndImportModule
+    InstallSudoCommand
     InstallOhMyPosh
     RestoreWTConfig
 
