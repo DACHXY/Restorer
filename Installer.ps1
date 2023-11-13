@@ -1,3 +1,5 @@
+$USER_DIR = "$env:USERPROFILE\Documents\DN"
+
 $backupDir = $args[0]
 
 if (-not (Test-Path $backupDir)){
@@ -221,6 +223,29 @@ function RestoreUserFiles {
         7z x $targetDir -o"$env:USERPROFILE\Documents\DN\" -y
     }
     Write-Host "[Done] Restored User Documents."
+}
+
+function RestoreStartup {
+    Write-Host "Restoring Startups"
+    $startupFolderPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup"
+
+    $targetDirs = New-Object 'string[,]' 1, 2
+
+    $targetDirs[0, 0] = "$USER_DIR\Autohotkey\shortcut.ahk"
+    $targetDirs[0, 1] = "$startupFolderPath\shortcut.lnk"
+
+    for ($i = 0; $i -lt $targetDirs.GetLength(0); $i++) {
+        $shortcutPath = ($targetDirs[$i, 1]).ToString()
+        $targetPath = ($targetDirs[$i, 0]).ToString()
+
+        $shell = New-Object -ComObject WScript.Shell
+        $shortcut = $shell.CreateShortcut("$shortcutPath")
+        $shortcut.TargetPath = $targetPath
+        $shortcut.WorkingDirectory = (Get-Item $targetPath).DirectoryName
+        $shortcut.Save()
+    }
+    
+    Write-Host "[Done] Restore Startups"
 }
 
 function InstallSudoCommand {
