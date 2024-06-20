@@ -80,6 +80,11 @@ function InstallChocolateyAndImportModule {
     $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     refreshenv
+
+    Invoke-RestMethod get.scoop.sh | Invoke-Expression
+    scoop bucket add extras
+    scoop install extras/z
+    scoop install terminal-icons
 }
 
 function InstallOhMyPosh {
@@ -253,6 +258,22 @@ function InstallSudoCommand {
     refreshenv
 }
 
+function AddVisualCodeToMenu {
+    $keyName = "VisualStudioCode"
+    $parentPath = "Registry::HKEY_CLASSES_ROOT"
+    $regPath = "$parentPath\*\shell\$keyName"
+    $position = "Bottom"
+    $iconPath = "$env:USERPROFILE\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+
+    New-Item -Path $regPath -Force
+    New-ItemProperty -Path $regPath -Name "(default)" -PropertyType String -Value "Open With Code" -Force
+    Set-ItemProperty -Path $regPath -Name "Position" -Value $position
+    Set-ItemProperty -Path $regPath -Name "Icon" -Value $iconPath
+
+    New-Item -Path "$regPath\command" -Force
+    Set-ItemProperty -Path $regPath -Name "command" -Value "'$iconPath' '%1'"
+}
+
 function main {
     InstallChocolateyAndImportModule
     InstallSudoCommand
@@ -263,6 +284,7 @@ function main {
         RestoreWSL
         RestorePicture
         RestoreUserFiles
+        RestoreStartup
     }
 
     RestoreUserFileStructure
